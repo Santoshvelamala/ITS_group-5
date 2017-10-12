@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+    <head>
+  <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+  <script>
+    zingchart.MODULESDIR = "https://cdn.zingchart.com/modules/";
+    ZC.LICENSE = ["569d52cefae586f634c54f86dc99e6a9", "ee6b7db5b51705a13dc2339db3edaf6d"];
+  </script>
+  <style></style>
+	</head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Maps</title>
+    <style>
+      #map {
+        height: 100%;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+<h1>Welcome {{ k.First_name }} {{k.Last_name}}</h1>
+<form action="http://10.0.3.23:1996/clientapp/rend/"><button type="submit">Analytics</button></form>
+<script>
+var k_id="{{ k.id }}";
+{% for da in data2 %}
+	var ss="{{ da.Farm_pic }}";
+{% endfor %}
+</script>
+
+
+<br><br>
+<script>
+
+
+var house=[];
+
+/* Extracting the latitude and longitude values of the houses of the household 
+    from the retreived data from the server*/
+
+
+{% for item in data1 %}
+
+	var H1={{ item.HLat }};
+	var H2={{ item.HLong }};
+	var HId={{ item.F_id }};
+        house.push([H1,H2,HId]);
+{% endfor %}
+</script>
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Farms</title>
+    <style>
+      #map {
+        height: 100%;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+var imgwells=["https://image.ibb.co/kJNEtw/W1.png","https://image.ibb.co/hc0pRG/W2.jpg","https://image.ibb.co/cZwURG/W3.jpg","https://image.ibb.co/jVvpRG/W4.jpg","https://image.ibb.co/daZimG/W5.jpg","https://image.ibb.co/cwHEtw/W6.jpg","https://image.ibb.co/hbbURG/W7.jpg"];
+var imghouses=["https://image.ibb.co/mLFjtw/H1.jpg","https://image.ibb.co/b4jzRG/H2.jpg","https://image.ibb.co/cNRDmG/H3.jpg","https://image.ibb.co/nAdhfb/H4.jpg","https://image.ibb.co/jMeoLb/H5.jpg"];
+var imgfarms=["https://image.ibb.co/jGdtmG/F1.jpg","https://image.ibb.co/bsr2fb/F2.jpg","https://image.ibb.co/mrOF0b/F3.jpg","https://image.ibb.co/eyt4tw/F4.jpg","https://image.ibb.co/eQMk0b/F5.jpg","https://image.ibb.co/hN7Etw/F6.jpg","https://image.ibb.co/esUzRG/F7.jpg"];
+
+
+      var map;
+      var infoWindow;
+
+
+// Initializing the maps
+
+
+function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 20,
+          center: {lat: 18.420656, lng: 84.016430},
+          mapTypeId: 'satellite'
+        });
+
+
+
+/* Extracting the coordinates of the farms from the data came from the server */
+
+var farmCoords=[];
+var farmdet=[];
+     {% for item in data2 %}
+    	var La1 = {{ item.Lat_1 }};
+    	var Lo1 = {{ item.Long_1 }};
+    	var La2 = {{ item.Lat_2 }};
+    	var Lo2 = {{ item.Long_2 }};
+    	var La3 = {{ item.Lat_3 }};
+    	var Lo3 = {{ item.Long_3 }};
+    	var La4 = {{ item.Lat_4 }};
+    	var Lo4 = {{ item.Long_4 }};
+    	var La5 = {{ item.Lat_5 }};
+    	var Lo5 = {{ item.Long_5 }};
+    	var La6 = {{ item.Lat_6 }};
+    	var Lo6 = {{ item.Long_6 }};
+    	var La7 = {{ item.Lat_7 }};
+    	var Lo7 = {{ item.Long_7 }};
+    	var La8 = {{ item.Lat_8 }};
+    	var Lo8 = {{ item.Long_8 }};
+	var Season="{{ item.Season }}";
+	var Crop="{{ item.Crop }}";
+	var FF_id={{item.id}}; 
+	farmCoords.push([
+            {lat: La1, lng: Lo1},
+            {lat: La2, lng: Lo2},
+            {lat: La3, lng: Lo3},
+	    {lat: La4, lng: Lo4},
+	    {lat: La5, lng: Lo5},
+            {lat: La6, lng: Lo6},
+            {lat: La7, lng: Lo7},
+	    {lat: La8, lng: Lo8}
+        ]);
+	farmdet.push([Season,Crop,FF_id]);
+    {% endfor %}
+
+
+/* Plotting the farms on the map with the above extracted coordinates */
+/* Making the info window to display text attributes and the picture of the farm */
+
+for (i = 0; i < farmCoords.length; i++) {
+      var farmBoundary = new google.maps.Polygon({
+          paths: farmCoords[i],
+          strokeColor: '#000000',
+          strokeOpacity: 0.8,
+          strokeWeight: 3,
+          fillColor: '#008700',
+          fillOpacity: 0.35,
+	  name: 'name 1'
+        });
+      farmBoundary.setMap(map);
+      farmBoundary.addListener('click', showArrays);
+      infoWindow = new google.maps.InfoWindow;
+	function showArrays(event) {
+	var contentString ="Farm_Id: "+farmdet[1][2]+'<br>'+"Season: "+Season+'<br>'+"Crop: "+Crop+'<br><br>'+ '<img src='+imgfarms[i]+' alt="Farm Pic" height="200" width="200">' ; 
+        infoWindow.setContent(contentString);
+        infoWindow.setPosition(event.latLng);
+
+        infoWindow.open(map);}
+	
+      }
+
+
+/* Marking the wells on the map with the above extracted coordinates of the wells*/
+
+/* Making the info window to display text attributes and the picture of the Wells */
+
+
+var locations=[];
+   
+    {% for item in data %}
+	var W1 = {{ item.Lat }};
+        var W2 = {{ item.Long }};
+        var D={{ item.Depth }};
+	var A={{ item.Avg_water }};
+	locations.push([W1,W2,D,A]);
+    {% endfor %}
+var infowindow = new google.maps.InfoWindow();
+
+    var marker, i;
+
+    for (i = 0; i < locations.length; i++) {  
+      marker = new google.maps.Marker({
+        position: new google.maps.LatLng(locations[i][0],locations[i][1]),
+        map: map
+      });
+
+      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+          infowindow.setContent("Depth : "+locations[i][2]+"<br>"+"Avg yield : "+locations[i][3]+'<br>'+'<img src='+imgwells[i]+' alt="Well pic" height="200" width="200">');
+          infowindow.open(map, marker);
+        }
+      })(marker, i));
+    }
+
+
+/* Marking the houses on the map with the above extracted coordinates */
+
+/* Making the info window to display text attributes and the picture of the house */
+
+/* Marking a circle around the house whose diameter varies according to the no. of members of that house*/
+
+
+    var infowindow = new google.maps.InfoWindow();
+
+    var marker, i;
+
+    for (i = 0; i < house.length; i++) {  
+      marker = new google.maps.Marker({
+	animation: google.maps.Animation.DROP,
+        position: new google.maps.LatLng(house[i][0],house[i][1]),
+
+        map: map
+      });
+      var popu=0;
+      {% for fm in data3 %}
+		popu=popu+1
+	{% endfor %}
+      var citymap = {
+        chicago: {
+          center: {lat: house[i][0], lng: house[i][1]},
+          population: popu
+        }
+      };
+
+        for (var city in citymap) {
+          var cityCircle = new google.maps.Circle({
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0.35,
+            map: map,
+            center: citymap[city].center,
+            radius: Math.sqrt(citymap[city].population) * 3
+          });
+        }
+      
+
+      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+        var content='<table style="width:100%"><tr><th>Name</th><th>Relation</th><th>Gender</th><th>D.O.B</th></tr>';  
+	{% for fm in data3 %}
+		var Relation= "{{ fm.Relation }}";
+		var Name="{{ fm.Name }}";
+		var Gender="{{ fm.Gender }}";
+		var dob="{{ fm.D_o_b }}";
+		content=content+'<tr><td>'+Name+'</td><td>'+Relation+'</td><td>'+Gender+'</td><td>'+dob+'</td></tr>';
+	{% endfor %}
+	  infowindow.setContent(content+'</table>'+'<br>'+'<img src='+imghouses[k_id]+' alt="House pic" height="200" width="200">');
+          infowindow.open(map, marker);
+        }
+      })(marker, i));
+    }
+
+
+ }
+ </script>
+
+  
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDA6DBq5hcAeUdPjXiUIiUIKOfqbdUxaQ8 &callback=initMap">
+    </script>
+
+
+</body>
+
+</html>
